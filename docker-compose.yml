@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  # Aplicacoes vulneraveis de teste (ex.: DVWA, OWASP Juice Shop)
+  dvwa:
+    image: vulnerables/web-dvwa
+    ports:
+      - "8080:80"
+    environment:
+      - MYSQL_ROOT_PASSWORD=dvwa
+
+  juice-shop:
+    image: bkimminich/juice-shop
+    ports:
+      - "3000:3000"
+
+  # Servico auxiliar para analise/avaliacao
+  attacker:
+    build: ./src/genai_attacker
+    volumes:
+      - ./datasets:/app/datasets
+      - ./docs:/app/docs
+    depends_on:
+      - dvwa
+      - juice-shop
